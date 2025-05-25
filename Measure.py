@@ -2,43 +2,43 @@ import re
         
 class Measure:
     def __init__(self, numBeats, beatDuration):
-        self.maxBeats = numBeats
-        self.beatDuration = beatDuration
-        self.currentBeatCount = 0.0
+        self.mMaxBeats = numBeats
+        self.nBeatDuration = beatDuration
+        self.mCurrentBeatCount = 0.0
         self.notes = ""
         
     def addNote(self, note):
-        duration = int(re.findall(r'\d+', note)[0])
+        nDuration = int(re.findall(r'\d+', note)[0])
         
-        if(duration <= 0 or duration > 32):
+        if(nDuration <= 0 or nDuration > 32):
             print("addNote(): Invalid note input")
             
-        beatLength = self.beatDuration / duration
+        nBeatLength = self.nBeatDuration / nDuration
         
-        if(self.currentBeatCount == self.maxBeats):
+        if(self.mCurrentBeatCount == self.mMaxBeats):
             return 0.0
-        elif(self.currentBeatCount + beatLength <= self.maxBeats):
-            self.currentBeatCount = self.currentBeatCount + beatLength
+        elif(self.mCurrentBeatCount + nBeatLength <= self.mMaxBeats):
+            self.mCurrentBeatCount = self.mCurrentBeatCount + nBeatLength
             self.notes = self.notes + note 
-            return self.maxBeats - self.currentBeatCount
+            return self.mMaxBeats - self.mCurrentBeatCount
         else:
-            desiredLength = self.maxBeats - self.currentBeatCount
-            newDuration = self.beatDuration / desiredLength
+            nFillMeasureLength = self.mMaxBeats - self.mCurrentBeatCount
+            nNewDuration = self.nBeatDuration / nFillMeasureLength
             
-            if(not newDuration.is_integer() or int(newDuration).bit_count() != 1): # If not a power of 2
-                bits = int(newDuration).bit_length()
-                newDuration = 1 << bits
+            if(not nNewDuration.is_integer() or int(nNewDuration).bit_count() != 1): # If not a power of 2
+                bits = int(nNewDuration).bit_length()
+                nNewDuration = 1 << bits    #Round up to a power of two
                 
-            newLength = self.beatDuration / newDuration
+            nNewLength = self.nBeatDuration / nNewDuration
             
-            note = note.replace(str(int(duration)), str(int(newDuration)))
-            self.currentBeatCount = self.currentBeatCount + newLength
+            note = note.replace(str(int(nDuration)), str(int(nNewDuration)))
+            self.mCurrentBeatCount = self.mCurrentBeatCount + nNewLength
             self.notes = self.notes + note 
-            return self.maxBeats - self.currentBeatCount
+            return self.mMaxBeats - self.mCurrentBeatCount
         
     def getMeasureStr(self):
         return self.notes
     
     def clearMeasure(self):
         self.notes = ""
-        self.currentBeatCount = 0.0
+        self.mCurrentBeatCount = 0.0
