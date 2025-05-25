@@ -1,155 +1,132 @@
+import unittest
+
 from Measure import Measure
 import Notes
 
-def test_getMeasureStr():
-    testMeasure = Measure(4, 4)
+class TestMeasure(unittest.TestCase):
 
-    print("=== Adding one note ===")
+    #Get measure string
+    def test_getMeasureStr(self):
+        testMeasure = Measure(4, 4)
 
-    note = Notes.getRandomNote()
+        note = Notes.getRandomNote()
 
-    testMeasure.addNote(note)
+        testMeasure.addNote(note)
 
-    print("Expected:", note)
-    print("Actual: ", testMeasure.getMeasureStr())
+        self.assertEqual(note, testMeasure.getMeasureStr())
 
-def test_clearMeasure():
-    testMeasure = Measure(4, 4)
+    #Clearing measure of notes
+    def test_clearMeasure(self):
+        testMeasure = Measure(4, 4)
 
-    print("=== Filling measure ===")
+        testMeasure.addNote(Notes.getRandomNote())
 
-    testMeasure.addNote(Notes.getRandomNote())
+        filled = len(testMeasure.getMeasureStr()) > 0
 
-    filled = len(testMeasure.getMeasureStr()) > 0
+        self.assertTrue(filled) #Measure has something
 
-    print("Expected: True")
-    print("Actual: ", filled)
+        testMeasure.clearMeasure()
 
-    print("=== Clearing measure ===")
+        filled = len(testMeasure.getMeasureStr()) == 0
 
-    testMeasure.clearMeasure()
+        self.assertTrue(filled) #Measure is cleared
 
-    filled = len(testMeasure.getMeasureStr()) == 0
+        
 
-    print("Expected: True")
-    print("Actual: ", filled)
+    #Fill with quarter notes, making sure each one gets added
+    def test_addNote(self):
+        testMeasure = Measure(4, 4)
 
-    
+        spaceLeft = testMeasure.addNote("c'4")
 
-def test_addNote():
-    testMeasure = Measure(4, 4)
+        self.assertEqual("c'4", testMeasure.getMeasureStr())
 
-    print("=== Adding One Quarter Note ===")
+        self.assertAlmostEqual(3.0, spaceLeft)  #Accurate up to 7 decimal places
 
-    spaceLeft = testMeasure.addNote("c'4")
+        spaceLeft = testMeasure.addNote("d'4")
 
-    print("Expected: c'4")
-    print("Actual:  ", testMeasure.getMeasureStr())
+        self.assertEqual("c'4d'4", testMeasure.getMeasureStr())
 
-    print("Expected: 3.0")
-    print("Actual: ", spaceLeft)
+        self.assertAlmostEqual(2.0, spaceLeft)
 
-    print("=== Filling the measure ===")
+        spaceLeft = testMeasure.addNote("e'4")
 
-    print("- Adding second note")
-    spaceLeft = testMeasure.addNote("d'4")
+        self.assertEqual("c'4d'4e'4", testMeasure.getMeasureStr())
 
-    print("Expected: c'4d'4")
-    print("Actual:  ", testMeasure.getMeasureStr())
+        self.assertAlmostEqual(1.0, spaceLeft)
 
-    print("Expected: 2.0")
-    print("Actual: ", spaceLeft)
+        spaceLeft = testMeasure.addNote("f'4")
+        
+        self.assertEqual("c'4d'4e'4f'4", testMeasure.getMeasureStr())
 
-    print("- Adding third note")
-    spaceLeft = testMeasure.addNote("e'4")
+        self.assertAlmostEqual(0.0, spaceLeft)
+        
+    #Attempt to overfill with different sized notes
+    def test_addNoteOverfill(self):
+        #Filling all the way with just quarter notes
+        testMeasure = Measure(4, 4)
+        spaceLeft = testMeasure.addNote("c'4")
+        spaceLeft = testMeasure.addNote("d'4")
+        spaceLeft = testMeasure.addNote("e'4")
+        spaceLeft = testMeasure.addNote("f'4")
+        
+        #Trying to add one more quarter note
+        spaceLeft = testMeasure.addNote("g'4")
+        
+        self.assertEqual("c'4d'4e'4f'4", testMeasure.getMeasureStr())
 
-    print("Expected: c'4d'4e'4")
-    print("Actual:  ", testMeasure.getMeasureStr())
+        self.assertAlmostEqual(0.0, spaceLeft)
+        
+        #Try overfill with larger notes
+        #Whole notes and half notes
+        testMeasure.clearMeasure()
 
-    print("Expected: 1.0")
-    print("Actual: ", spaceLeft)
+        addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 1, Notes.commonRhythms)
 
-    print("- Adding fourth note")
-    spaceLeft = testMeasure.addNote("f'4")
-    
-    print("Expected: c'4d'4e'4f'4")
-    print("Actual:  ", testMeasure.getMeasureStr())
+        testMeasure.addNote(addedNote)
 
-    print("Expected: 0.0")
-    print("Actual: ", spaceLeft)
+        addedNote = Notes.getNote(1, 1, Notes.mixedSeries, 0, Notes.commonRhythms)
 
-    print("=== Attempting to overfill ===")
+        spaceLeft = testMeasure.addNote(addedNote)
 
-    spaceLeft = testMeasure.addNote("g'4")
-    
-    print("Expected: c'4d'4e'4f'4")
-    print("Actual:  ", testMeasure.getMeasureStr())
+        self.assertAlmostEqual(0.0, spaceLeft)
 
-    print("Expected: 0.0")
-    print("Actual: ", spaceLeft)
+        #Half notes and quarter notes
+        testMeasure.clearMeasure()
 
-    print("=== Refilling with notes too big ===")
-    
-    print("- Whole and half notes")
+        addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 1, Notes.commonRhythms)
 
-    testMeasure.clearMeasure()
+        testMeasure.addNote(addedNote)
 
-    addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 1, Notes.noteDurations)
+        addedNote = Notes.getNote(1, 1, Notes.mixedSeries, 2, Notes.commonRhythms)
+        
+        testMeasure.addNote(addedNote)
+        
+        addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 1, Notes.commonRhythms)
 
-    testMeasure.addNote(addedNote)
+        spaceLeft = testMeasure.addNote(addedNote)
 
-    addedNote = Notes.getNote(1, 1, Notes.mixedSeries, 0, Notes.noteDurations)
+        self.assertAlmostEqual(0.0, spaceLeft)
+        
+        # Quarter and eighth notes
+        testMeasure.clearMeasure()
 
-    spaceLeft = testMeasure.addNote(addedNote)
+        addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 2, Notes.commonRhythms)
 
-    print("Expected: -2.0")
-    print("Actual: ", spaceLeft)
-    
-    print("- Half and quarter notes")
-    
-    testMeasure.clearMeasure()
+        testMeasure.addNote(addedNote)
+        testMeasure.addNote(addedNote)
+        testMeasure.addNote(addedNote)
 
-    addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 1, Notes.noteDurations)
+        addedNote = Notes.getNote(1, 1, Notes.mixedSeries, 3, Notes.commonRhythms)
+        
+        testMeasure.addNote(addedNote)
+        
+        addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 2, Notes.commonRhythms)
 
-    testMeasure.addNote(addedNote)
+        spaceLeft = testMeasure.addNote(addedNote)
 
-    addedNote = Notes.getNote(1, 1, Notes.mixedSeries, 2, Notes.noteDurations)
-    
-    testMeasure.addNote(addedNote)
-    
-    addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 1, Notes.noteDurations)
-
-    spaceLeft = testMeasure.addNote(addedNote)
-
-    print("Expected: -1.0")
-    print("Actual: ", spaceLeft)
-    
-    print("- Quarter and eighth notes")
-    
-    testMeasure.clearMeasure()
-
-    addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 2, Notes.noteDurations)
-
-    testMeasure.addNote(addedNote)
-    testMeasure.addNote(addedNote)
-    testMeasure.addNote(addedNote)
-
-    addedNote = Notes.getNote(1, 1, Notes.mixedSeries, 3, Notes.noteDurations)
-    
-    testMeasure.addNote(addedNote)
-    
-    addedNote = Notes.getNote(0, 1, Notes.mixedSeries, 2, Notes.noteDurations)
-
-    spaceLeft = testMeasure.addNote(addedNote)
-
-    print("Expected: -0.5")
-    print("Actual: ", spaceLeft)
-
-def runTests():
-    test_getMeasureStr()
-    test_clearMeasure()
-    test_addNote()
+        self.assertAlmostEqual(0.0, spaceLeft)
 
 
-if __name__ == "__main__":
-    runTests()
+if __name__ == '__main__':
+    unittest.main()
