@@ -1,8 +1,8 @@
 # Sight Reading Generator
 
 import abjad
-from Measure import Measure
-import Notes
+from src.Measure import Measure
+import src.Notes as Notes
 
 cMajorSeries = ['c', 'd', 'e', 'f', 'g', 'a', 'b']
 fMinorSeries = ['f', 'g', 'af', 'bf', 'c', 'df', 'ef']
@@ -18,9 +18,9 @@ def main():
 
     idx = 0
     for j in range(measures):
-        spaceLeft = measureList[idx].addNote(Notes.getRandomNote(wholeToneSeries))
+        spaceLeft = measureList[idx].addNote(Notes.getRandomNote(wholeToneSeries, rhythms=['8']))
         while(spaceLeft > 0):
-            spaceLeft = measureList[idx].addNote(Notes.getRandomNote(wholeToneSeries))
+            spaceLeft = measureList[idx].addNote(Notes.getRandomNote(wholeToneSeries, rhythms=['8']))
         idx = idx + 1
 
     string = ""

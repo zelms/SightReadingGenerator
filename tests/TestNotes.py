@@ -1,6 +1,6 @@
 import unittest
 
-import Notes
+import src.Notes as Notes
 
 testNoteSeries = ['a', 'cs', 'e']
 testRhythmSeries = ['2', '4', '8']

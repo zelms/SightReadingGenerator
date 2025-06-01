@@ -1,7 +1,7 @@
 import unittest
 
-from Measure import Measure
-import Notes
+from src.Measure import Measure
+import src.Notes as Notes
 
 class TestMeasure(unittest.TestCase):
 
