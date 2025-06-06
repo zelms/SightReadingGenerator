@@ -1,0 +1,26 @@
+[project]
+name = "SightReadingGenerator"
+version = "0.1.0"
+description = "A python package to easily allow musicians to create semi-random sheet music"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Zach Elms" }
+]
+dependencies = [
+  "abjad"
+]
+
+[project.urls]
+Homepage = "https://github.com/zelms/SightReadingGenerator"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
